@@ -18,10 +18,13 @@ https://raw.githubusercontent.com/MinamiHashiRun0/bilibili-cdn-rewrite/main/Bili
 ## 说明
 
 - 目标 CDN：`cn-gddg-ct-01-01.bilivideo.com`（广东东莞电信）
-- 覆盖原配置中的三类流量：
+- 覆盖的流量：
   1. `:8000/v1/resource/` → reject（屏蔽）
-  2. 任意 `*.bilivideo.cn` / `*.bilivideo.com` 的 `/upgcxcode/` 视频流量 → 重定向
-  3. `:4480 / :4483 / :9102`（mcdn / P2P CDN 端口）的 `/upgcxcode/` 流量 → 重定向
+  2. `*.akamaized.net`（如 `upos-hz-mirrorakam.akamaized.net`，B 站 Akamai 海外镜像）→ 重定向
+  3. 任意 `*.bilivideo.cn` / `*.bilivideo.com` 的 `/upgcxcode/` 视频流量 → 重定向
+  4. `:4480 / :4483 / :9102`（mcdn / P2P CDN 端口）的 `/upgcxcode/` 流量 → 重定向
+  5. `*.szbdyd.com`（B 站自建 P2P 跳转域名）→ 重定向
+  6. **兜底规则**：任何域名的 `/upgcxcode/` 视频流量一律重定向，保证 App 所有视频访问全部走目标 CDN
 - 原配置中 mcdn 的 4483/8082 端口使用 `/v1/resource/upgcxcode/` 包装路径，本插件的正则已包含 `v1/resource` 前缀兼容。
 - Surge 的 `force-http-engine` 在 Loon 中无对应功能；80 端口纯 HTTP 流量 Loon 原生处理，无需额外配置。
 - 其他可替换的镜像 CDN 节点（可自行把插件中的目标域名替换为）：

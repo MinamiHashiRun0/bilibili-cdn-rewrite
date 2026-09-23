@@ -5,10 +5,16 @@
 [Rewrite]
 # 屏蔽 8000 端口的资源接口（PCDN）
 ^(https?):\/\/(.*):8000\/v1\/resource\/ reject
+# Akamai 官方镜像（如 upos-hz-mirrorakam.akamaized.net）-> 广东东莞电信 CDN
+^(https?):\/\/(.+\.akamaized\.net)(?::\d+)?\/(?:v1\/resource\/)?upgcxcode\/(.+)$ $1://cn-gddg-ct-01-01.bilivideo.com/upgcxcode/$3 header
 # 所有 bilivideo.cn / bilivideo.com 的 upgcxcode 流量 -> 广东东莞电信 CDN
 ^(https?):\/\/(.+\.bilivideo\.(?:cn|com))(?::\d+)?\/(?:v1\/resource\/)?upgcxcode\/(.+)$ $1://cn-gddg-ct-01-01.bilivideo.com/upgcxcode/$3 header
 # mcdn 及特殊端口 4480 / 4483 / 9102 的 upgcxcode 流量 -> 广东东莞电信 CDN
 ^(https?):\/\/(.+):(?:4480|4483|9102)\/(?:v1\/resource\/)?upgcxcode\/(.+)$ $1://cn-gddg-ct-01-01.bilivideo.com/upgcxcode/$3 header
+# B 站自建 P2P / szbdyd 等其它下发域名 -> 广东东莞电信 CDN
+^(https?):\/\/(.+\.szbdyd\.com)(?::\d+)?\/(?:v1\/resource\/)?upgcxcode\/(.+)$ $1://cn-gddg-ct-01-01.bilivideo.com/upgcxcode/$3 header
+# 兜底：任何域名的 /upgcxcode/ 视频流量一律重定向，确保 App 所有视频访问全走目标 CDN
+^(https?):\/\/[^\/]+(?::\d+)?\/(?:v1\/resource\/)?upgcxcode\/(.+)$ $1://cn-gddg-ct-01-01.bilivideo.com/upgcxcode/$2 header
 
 [MITM]
 hostname = *.bilivideo.cn, *.bilivideo.com, *.mcdn.bilivideo.cn, *.mcdn.bilivideo.com
