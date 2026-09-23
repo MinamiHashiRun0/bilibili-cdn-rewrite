@@ -1,5 +1,5 @@
 #!name = BiliBili 重定向到正规 CDN
-#!desc = 🇭🇰 仅适合在中国大陆使用港澳台版\n🍻 加载更流畅的 BiliBili 更值得干杯！\n⚠️ 需要开启 MitM（由 Surge url-rewrite 配置转换而来）
+#!desc = 🇭🇰 仅适合在中国大陆使用港澳台版\n🍻 加载更流畅的 BiliBili 更值得干杯！\n✅ playurl API 改写 + URL 重定向双保险\n⚠️ 需要开启 MitM 并信任 Loon CA 证书
 #!icon = https://cdn.jsdelivr.net/gh/Koolson/Qure/IconSet/Color/bilibili.png
 
 [Rewrite]
@@ -16,5 +16,9 @@
 # 兜底：任何域名的 /upgcxcode/ 视频流量一律重定向，确保 App 所有视频访问全走目标 CDN
 ^(https?):\/\/[^\/]+(?::\d+)?\/(?:v1\/resource\/)?upgcxcode\/(.+)$ $1://cn-gddg-ct-01-01.bilivideo.com/upgcxcode/$2 header
 
+[Script]
+# API 层改写：直接在 playurl 接口响应里把视频 CDN 域名替换为目标 CDN（源头治理）
+bili-playurl = type=http-response,pattern=^https?:\/\/[a-z0-9]+\.bilibili\.com\/.*playurl,requires-body=true,script-path=https://raw.githubusercontent.com/MinamiHashiRun0/bilibili-cdn-rewrite/main/bili-playurl.js,timeout=10,tag=B站playurl改写
+
 [MITM]
-hostname = *.bilivideo.cn, *.bilivideo.com, *.mcdn.bilivideo.cn, *.mcdn.bilivideo.com
+hostname = *.bilivideo.cn, *.bilivideo.com, *.mcdn.bilivideo.cn, *.mcdn.bilivideo.com, api.bilibili.com, app.bilibili.com, upos-hz-mirrorakam.akamaized.net

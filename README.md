@@ -13,10 +13,18 @@
 https://raw.githubusercontent.com/MinamiHashiRun0/bilibili-cdn-rewrite/main/BiliBili.Redirect.plugin
 ```
 
-开启 MitM 并信任 Loon 生成的 CA 证书即可。
+开启 MitM 并信任 Loon 生成的 CA 证书即可（需要在 MitM 里给 `api.bilibili.com` / `app.bilibili.com` 等域名安装证书授权，第一次使用时 Loon 会提示）。
+
+⚠️ **插件更新后必须手动刷新**：Loon 不会立即拉取远程插件更新，请在 Loon → 配置 → 插件 里点更新（或删除重加），然后杀掉 B 站 App 重进（清缓存更彻底），让 playurl 重新请求。已缓存的旧播放地址不会自动变更。
 
 ## 说明
 
+改写分两层：
+
+1. **API 层（源头）**：MitM `api.bilibili.com` / `app.bilibili.com` 的 `playurl` 响应，在返回的 JSON 里把 Akamai / mcdn / PCDN 域名直接替换为目标 CDN（脚本 `bili-playurl.js`）。这样 App 拿到的播放地址本身就已经是目标 CDN，不会再请求 Akamai 镜像。
+2. **URL 层（兜底）**：即使播放地址漏改（如 gRPC 接口下发），实际视频请求也会被 Rewrite 拦截重定向。
+
+URL 层覆盖的流量：
 - 目标 CDN：`cn-gddg-ct-01-01.bilivideo.com`（广东东莞电信）
 - 覆盖的流量：
   1. `:8000/v1/resource/` → reject（屏蔽）
