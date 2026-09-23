@@ -1,0 +1,14 @@
+#!name = BiliBili 重定向到正规 CDN
+#!desc = 🇭🇰 仅适合在中国大陆使用港澳台版\n🍻 加载更流畅的 BiliBili 更值得干杯！\n⚠️ 需要开启 MitM（由 Surge url-rewrite 配置转换而来）
+#!icon = https://cdn.jsdelivr.net/gh/Koolson/Qure/IconSet/Color/bilibili.png
+
+[Rewrite]
+# 屏蔽 8000 端口的资源接口（PCDN）
+^(https?):\/\/(.*):8000\/v1\/resource\/ reject
+# 所有 bilivideo.cn / bilivideo.com 的 upgcxcode 流量 -> 广东东莞电信 CDN
+^(https?):\/\/(.+\.bilivideo\.(?:cn|com))(?::\d+)?\/(?:v1\/resource\/)?upgcxcode\/(.+)$ $1://cn-gddg-ct-01-01.bilivideo.com/upgcxcode/$3 header
+# mcdn 及特殊端口 4480 / 4483 / 9102 的 upgcxcode 流量 -> 广东东莞电信 CDN
+^(https?):\/\/(.+):(?:4480|4483|9102)\/(?:v1\/resource\/)?upgcxcode\/(.+)$ $1://cn-gddg-ct-01-01.bilivideo.com/upgcxcode/$3 header
+
+[MITM]
+hostname = *.bilivideo.cn, *.bilivideo.com, *.mcdn.bilivideo.cn, *.mcdn.bilivideo.com
